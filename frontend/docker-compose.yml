@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: classicmodels-frontend
+    restart: unless-stopped
+    environment:
+      DB_HOST: host.docker.internal
+      DB_PORT: 3306
+      DB_USER: admin
+      DB_PASSWORD: adminpwrd
+      DB_NAME: classicmodels
+    ports:
+      - "3000:3000"

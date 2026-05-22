@@ -1,0 +1,38 @@
+services:
+  etl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: classicmodels-etl
+    environment:
+      PYTHONUNBUFFERED: "1"
+    command:
+      - python
+      - run_etl.py
+      - --host
+      - classicmodels-mysql
+      - --port
+      - "3306"
+      - --user
+      - admin
+      - --password
+      - adminpwrd
+      - --database
+      - classicmodels
+      - --target-path
+      - s3://classicmodels/warehouse
+      - --s3-endpoint
+      - http://classicmodels-minio:9000
+      - --s3-access-key-id
+      - minioadmin
+      - --s3-secret-access-key
+      - minioadmin
+    networks:
+      - db_default
+      - min_io_default
+
+networks:
+  db_default:
+    external: true
+  min_io_default:
+    external: true

@@ -1,0 +1,25 @@
+services:
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: classicmodels-jupyter
+    restart: unless-stopped
+    environment:
+      JUPYTER_ENABLE_LAB: "yes"
+      S3_ENDPOINT: classicmodels-minio:9000
+      S3_BUCKET: classicmodels
+      S3_PREFIX: warehouse
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/home/jovyan/work
+    command: start-notebook.py --NotebookApp.token='classicmodels'
+    networks:
+      - min_io_default
+
+networks:
+  min_io_default:
+    external: true

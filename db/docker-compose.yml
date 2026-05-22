@@ -1,0 +1,24 @@
+services:
+  mysql:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: classicmodels-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwrd
+      MYSQL_DATABASE: classicmodels
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: adminpwrd
+    ports:
+      - "3306:3306"
+    volumes:
+      - classicmodels-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpwrd"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  classicmodels-mysql-data:

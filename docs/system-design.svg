@@ -1,0 +1,122 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Classic Models Local Data Engineering Lab System Design</title>
+  <desc id="desc">Architecture diagram showing the operational frontend and MySQL source database, ETL into MinIO, DuckDB querying Parquet files, and Jupyter dashboards.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#285D63"/>
+    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#17353A" flood-opacity="0.12"/>
+    </filter>
+    <style>
+      .bg { fill: #f7faf8; }
+      .band { fill: #eef5f2; stroke: #d4e3de; stroke-width: 1; }
+      .card { fill: #ffffff; stroke: #cbd8d5; stroke-width: 1.5; filter: url(#shadow); }
+      .card-soft { fill: #fbfcfb; stroke: #cbd8d5; stroke-width: 1.5; }
+      .title { fill: #15343a; font-family: Arial, Helvetica, sans-serif; font-size: 30px; font-weight: 700; }
+      .subtitle { fill: #52676b; font-family: Arial, Helvetica, sans-serif; font-size: 16px; }
+      .section { fill: #285d63; font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 0.8px; }
+      .label { fill: #17353a; font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: 700; }
+      .body { fill: #52676b; font-family: Arial, Helvetica, sans-serif; font-size: 13px; }
+      .small { fill: #52676b; font-family: Arial, Helvetica, sans-serif; font-size: 12px; }
+      .mono { fill: #365054; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; }
+      .arrow { stroke: #285d63; stroke-width: 2.4; marker-end: url(#arrow); }
+      .arrow-soft { stroke: #6f8f8e; stroke-width: 2; stroke-dasharray: 7 7; marker-end: url(#arrow); }
+      .pill { fill: #e8f2ee; stroke: #bad0ca; stroke-width: 1; }
+      .accent { fill: #eaf3f4; }
+      .warn { fill: #fff4df; stroke: #e3c98e; stroke-width: 1; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1280" height="760"/>
+
+  <text x="48" y="54" class="title">Classic Models Data Engineering Lab</text>
+  <text x="48" y="82" class="subtitle">Local/server architecture: operational app, ETL pipeline, object storage, SQL serving layer, and dashboard.</text>
+
+  <rect x="44" y="120" width="360" height="560" rx="8" class="band"/>
+  <rect x="460" y="120" width="360" height="560" rx="8" class="band"/>
+  <rect x="876" y="120" width="360" height="560" rx="8" class="band"/>
+
+  <text x="68" y="154" class="section">OPERATIONAL SYSTEM</text>
+  <text x="484" y="154" class="section">DATA PIPELINE + STORAGE</text>
+  <text x="900" y="154" class="section">SERVING + ANALYTICS</text>
+
+  <rect x="80" y="190" width="288" height="116" rx="8" class="card"/>
+  <circle cx="116" cy="232" r="21" fill="#dff0e9" stroke="#9fc3b7" stroke-width="1"/>
+  <path d="M107 237h18M110 227h12M111 232h15" stroke="#285D63" stroke-width="2" stroke-linecap="round"/>
+  <text x="148" y="224" class="label">Next.js Frontend</text>
+  <text x="148" y="247" class="body">Internal operations app</text>
+  <text x="148" y="268" class="mono">frontend/</text>
+
+  <rect x="80" y="388" width="288" height="134" rx="8" class="card"/>
+  <ellipse cx="116" cy="428" rx="23" ry="10" fill="#dff0e9" stroke="#9fc3b7" stroke-width="1.5"/>
+  <path d="M93 428v32c0 6 46 6 46 0v-32" stroke="#285D63" stroke-width="2" fill="none"/>
+  <ellipse cx="116" cy="460" rx="23" ry="10" fill="none" stroke="#285D63" stroke-width="2"/>
+  <text x="148" y="421" class="label">MySQL</text>
+  <text x="148" y="444" class="body">classicmodels OLTP database</text>
+  <text x="148" y="465" class="mono">db/</text>
+  <text x="148" y="486" class="small">customers, orders, products, payments</text>
+
+  <line x1="224" y1="306" x2="224" y2="382" class="arrow"/>
+  <text x="238" y="350" class="small">reads and writes</text>
+
+  <rect x="496" y="220" width="288" height="128" rx="8" class="card"/>
+  <circle cx="532" cy="264" r="21" fill="#fff4df" stroke="#e3c98e" stroke-width="1"/>
+  <path d="M524 268l7 7 13-21" stroke="#8c6a13" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="564" y="256" class="label">Python ETL</text>
+  <text x="564" y="279" class="body">Extract, transform, load</text>
+  <text x="564" y="300" class="mono">etl/run_etl.py</text>
+  <text x="564" y="321" class="small">full refresh into Parquet</text>
+
+  <rect x="496" y="440" width="288" height="134" rx="8" class="card"/>
+  <rect x="510" y="460" width="44" height="44" rx="8" fill="#eaf3f4" stroke="#a7c4c9"/>
+  <path d="M520 474h24M520 484h24M520 494h18" stroke="#285D63" stroke-width="2" stroke-linecap="round"/>
+  <text x="564" y="473" class="label">MinIO</text>
+  <text x="564" y="496" class="body">S3-compatible object storage</text>
+  <text x="564" y="517" class="mono">min_io/</text>
+  <text x="564" y="538" class="small">s3://classicmodels/warehouse/</text>
+
+  <line x1="368" y1="455" x2="490" y2="284" class="arrow"/>
+  <text x="380" y="340" class="small">extract source tables</text>
+
+  <line x1="640" y1="348" x2="640" y2="434" class="arrow"/>
+  <text x="654" y="397" class="small">load Parquet files</text>
+
+  <rect x="902" y="210" width="288" height="128" rx="8" class="card"/>
+  <circle cx="938" cy="254" r="21" fill="#dff0e9" stroke="#9fc3b7" stroke-width="1"/>
+  <path d="M928 255c9-13 21-13 30 0M928 263c9-13 21-13 30 0" stroke="#285D63" stroke-width="2" stroke-linecap="round"/>
+  <text x="970" y="246" class="label">DuckDB</text>
+  <text x="970" y="269" class="body">SQL query engine over Parquet</text>
+  <text x="970" y="290" class="small">local equivalent serving layer</text>
+  <text x="970" y="311" class="mono">read_parquet(...)</text>
+
+  <rect x="902" y="442" width="288" height="128" rx="8" class="card"/>
+  <rect x="918" y="461" width="40" height="40" rx="7" fill="#fff4df" stroke="#e3c98e"/>
+  <path d="M928 493l8-18 8 11 6-7" stroke="#8c6a13" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="970" y="475" class="label">Jupyter Dashboard</text>
+  <text x="970" y="498" class="body">Notebook analysis and charts</text>
+  <text x="970" y="519" class="mono">dashboard/</text>
+  <text x="970" y="540" class="small">Pandas, Seaborn, ipywidgets</text>
+
+  <line x1="784" y1="505" x2="896" y2="274" class="arrow"/>
+  <text x="804" y="375" class="small">query files</text>
+
+  <line x1="1046" y1="338" x2="1046" y2="436" class="arrow"/>
+  <text x="1060" y="391" class="small">returns DataFrames</text>
+
+  <rect x="500" y="604" width="280" height="58" rx="8" class="card-soft"/>
+  <text x="520" y="628" class="body">Parquet tables: dim_customers,</text>
+  <text x="520" y="647" class="body">dim_products, dim_locations, fact_orders</text>
+
+  <line x1="224" y1="522" x2="224" y2="628" class="arrow-soft"/>
+  <line x1="224" y1="628" x2="494" y2="628" class="arrow-soft"/>
+  <text x="94" y="594" class="small">operational data becomes analytical data</text>
+
+  <rect x="902" y="604" width="288" height="58" rx="8" class="warn"/>
+  <text x="922" y="628" class="body">Heavy analytics avoid hitting the</text>
+  <text x="922" y="647" class="body">operational MySQL database.</text>
+
+  <rect x="48" y="704" width="1188" height="28" rx="8" class="pill"/>
+  <text x="70" y="723" class="small">Run order: db -> frontend -> min_io -> etl -> dashboard. The frontend uses MySQL; dashboards use DuckDB over Parquet in MinIO.</text>
+</svg>
