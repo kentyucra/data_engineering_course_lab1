@@ -115,14 +115,14 @@ docker compose down -v
 docker compose up -d --build
 ```
 
-If you see `Cannot connect to the Docker daemon`, Docker Desktop or another Docker runtime is not running. On macOS, open Docker Desktop from Applications and wait until it finishes starting, then run:
+If you see `Cannot connect to the Docker daemon`, Docker Desktop or another Docker runtime is not running. Start your Docker runtime and then run:
 
 ```bash
 docker info
 docker compose up -d --build
 ```
 
-If Docker Desktop is old or does not start on Apple Silicon, update Docker Desktop or use Colima:
+If you use Colima as your Docker runtime, start it before running Docker commands:
 
 ```bash
 brew install colima docker docker-compose

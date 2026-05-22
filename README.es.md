@@ -1,6 +1,6 @@
-# Laboratorio de Ciclo de Vida de Data Engineering en Tu Propio Servidor
+# Laboratorio de Ciclo de Vida de Data Engineering con Docker Local
 
-Esta guía explica cómo ejecutar el laboratorio completo de data engineering en una Mac mini, laptop o servidor.
+Esta guía explica cómo ejecutar el laboratorio completo de data engineering en cualquier máquina con Docker corriendo localmente.
 
 El proyecto demuestra un flujo de datos realista:
 
@@ -8,7 +8,7 @@ El proyecto demuestra un flujo de datos realista:
 App operacional + MySQL -> ETL -> almacenamiento de objetos MinIO -> consultas DuckDB -> dashboard en Jupyter
 ```
 
-![Diagrama de diseño del sistema](docs/system-design.svg)
+![Diagrama de diseno del sistema](docs/system-design.es.svg)
 
 El stack local usa:
 
@@ -24,7 +24,14 @@ El stack local usa:
 
 Instala Docker u otro runtime compatible con Docker.
 
-En esta configuración con Mac mini, Colima junto con el comando legacy `docker-compose` funciona bien:
+En Linux, agrega tu usuario al grupo `docker` para poder ejecutar Docker sin `sudo`:
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+Si usas Colima como runtime local de Docker, inícialo antes de ejecutar comandos Docker:
 
 ```bash
 brew install colima docker docker-compose
@@ -41,6 +48,13 @@ docker ps
 ```
 
 Si tu ambiente soporta el plugin nuevo de Docker Compose, puedes usar `docker compose` en lugar de `docker-compose`.
+
+Clona este repositorio y entra a la carpeta del proyecto:
+
+```bash
+git clone https://github.com/kentyucra/data_engineering_course_lab1.git
+cd data_engineering_course_lab1
+```
 
 ## 2. Iniciar la Base de Datos de Origen
 
@@ -93,12 +107,11 @@ El frontend ayuda a los estudiantes a entender cómo una aplicación operacional
 
 Muestra clientes, órdenes, productos, empleados, reportes y una página de esquema.
 
-Ejecutarlo localmente:
+Inicia el frontend con Docker Compose:
 
 ```bash
 cd frontend
-npm install
-npm run dev
+docker-compose up -d --build
 ```
 
 Abrir:
@@ -107,7 +120,7 @@ Abrir:
 http://localhost:3000
 ```
 
-Desde otra computadora en la misma red local, usa la IP de la Mac mini o del servidor:
+Desde otra computadora en la misma red local, usa la IP de la máquina host:
 
 ```text
 http://SERVER_IP:3000
@@ -206,9 +219,11 @@ etl/README.md
 etl/README.es.md
 ```
 
-## 6. Consultar los Datos con DuckDB
+## 6. Ejecutar el Dashboard en Jupyter
 
-MinIO almacena archivos, pero no ejecuta consultas SQL. DuckDB es el motor SQL local que lee los archivos Parquet desde MinIO.
+El dashboard usa la librería de DuckDB para Python para consultar archivos Parquet desde MinIO, y luego crea gráficos con Pandas, Seaborn, Matplotlib e ipywidgets.
+
+No necesitas instalar DuckDB directamente en tu máquina. DuckDB corre dentro del contenedor Docker de Jupyter.
 
 Un modelo mental útil:
 
@@ -218,47 +233,6 @@ DuckDB = el motor SQL que lee esos archivos
 ```
 
 DuckDB no reemplaza a MySQL. MySQL es la base de datos operacional de origen. DuckDB consulta los archivos Parquet analíticos transformados.
-
-Instala DuckDB localmente:
-
-```bash
-pip install duckdb
-```
-
-Ejecuta una consulta rápida:
-
-```python
-import duckdb
-
-con = duckdb.connect()
-
-con.sql("INSTALL httpfs;")
-con.sql("LOAD httpfs;")
-
-con.sql("SET s3_region='us-east-1';")
-con.sql("SET s3_endpoint='localhost:9000';")
-con.sql("SET s3_access_key_id='minioadmin';")
-con.sql("SET s3_secret_access_key='minioadmin';")
-con.sql("SET s3_use_ssl=false;")
-con.sql("SET s3_url_style='path';")
-
-result = con.sql("""
-    SELECT
-        p.productLine,
-        ROUND(SUM(f.orderAmount), 2) AS total_sales
-    FROM read_parquet('s3://classicmodels/warehouse/fact_orders/*.parquet') f
-    JOIN read_parquet('s3://classicmodels/warehouse/dim_products/*.parquet') p
-        ON f.productCode = p.productCode
-    GROUP BY p.productLine
-    ORDER BY total_sales DESC
-""").df()
-
-print(result)
-```
-
-## 7. Ejecutar el Dashboard en Jupyter
-
-El dashboard usa la librería de DuckDB para Python para consultar archivos Parquet desde MinIO, y luego crea gráficos con Pandas, Seaborn, Matplotlib e ipywidgets.
 
 Inicia Jupyter:
 
@@ -292,7 +266,7 @@ dashboard/README.md
 dashboard/README.es.md
 ```
 
-## 8. Detener Servicios
+## 7. Detener Servicios
 
 Detén cada servicio desde su carpeta:
 
@@ -329,7 +303,7 @@ docker-compose down -v
 
 Usa esto con cuidado porque elimina los volúmenes locales de Docker.
 
-## 9. Troubleshooting
+## 8. Troubleshooting
 
 ### El comando Docker Compose no funciona
 
@@ -345,7 +319,7 @@ usa:
 docker-compose up -d
 ```
 
-Este repositorio fue probado con Colima y el comando legacy `docker-compose`.
+Si tu configuración de Docker no soporta el plugin nuevo de Compose, usa el comando legacy `docker-compose`.
 
 ### MySQL no responde
 
@@ -409,7 +383,7 @@ localhost:9000
 
 El notebook del dashboard lee `S3_ENDPOINT` desde el ambiente, así que Docker Compose configura esto automáticamente.
 
-## 10. Qué Construiste
+## 9. Qué Construiste
 
 Al final, tienes un ciclo de vida completo de data engineering en local:
 

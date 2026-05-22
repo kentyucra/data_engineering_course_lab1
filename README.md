@@ -1,6 +1,6 @@
-# Data Engineering Lifecycle Lab on Your Own Server
+# Data Engineering Lifecycle Lab with Local Docker
 
-This guide explains how to run the full local data engineering lab on a Mac mini, laptop, or server.
+This guide explains how to run the full local data engineering lab on any machine with Docker running locally.
 
 The project demonstrates a realistic data flow:
 
@@ -24,7 +24,14 @@ The local stack uses:
 
 Install Docker or another Docker-compatible runtime.
 
-On this Mac mini setup, Colima plus the legacy `docker-compose` command works well:
+On Linux, add your user to the `docker` group so you can run Docker without `sudo`:
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+```
+
+If you use Colima as your local Docker runtime, start it before running Docker commands:
 
 ```bash
 brew install colima docker docker-compose
@@ -41,6 +48,13 @@ docker ps
 ```
 
 If your environment supports the newer Docker Compose plugin, you can use `docker compose` instead of `docker-compose`.
+
+Clone this repository and enter the project folder:
+
+```bash
+git clone https://github.com/kentyucra/data_engineering_course_lab1.git
+cd data_engineering_course_lab1
+```
 
 ## 2. Start the Source Database
 
@@ -93,12 +107,11 @@ The frontend helps students understand how a real operational application might 
 
 It shows customers, orders, products, employees, reports, and a schema page.
 
-Run it locally:
+Start the frontend with Docker Compose:
 
 ```bash
 cd frontend
-npm install
-npm run dev
+docker-compose up -d --build
 ```
 
 Open:
@@ -107,7 +120,7 @@ Open:
 http://localhost:3000
 ```
 
-From another computer on the same local network, use the Mac mini/server IP:
+From another computer on the same local network, use the host machine IP:
 
 ```text
 http://SERVER_IP:3000
@@ -203,9 +216,11 @@ More details are in:
 etl/README.md
 ```
 
-## 6. Query the Data with DuckDB
+## 6. Run the Jupyter Dashboard
 
-MinIO stores files, but it does not run SQL queries. DuckDB is the local SQL query engine that reads the Parquet files from MinIO.
+The dashboard uses the DuckDB Python library to query Parquet files from MinIO, then builds charts with Pandas, Seaborn, Matplotlib, and ipywidgets.
+
+You do not need to install DuckDB directly on your machine. It runs inside the Jupyter Docker container.
 
 A useful mental model:
 
@@ -215,47 +230,6 @@ DuckDB = the SQL engine that reads those files
 ```
 
 DuckDB does not replace MySQL. MySQL is the operational source database. DuckDB queries the transformed analytical Parquet files.
-
-Install DuckDB locally:
-
-```bash
-pip install duckdb
-```
-
-Run a quick query:
-
-```python
-import duckdb
-
-con = duckdb.connect()
-
-con.sql("INSTALL httpfs;")
-con.sql("LOAD httpfs;")
-
-con.sql("SET s3_region='us-east-1';")
-con.sql("SET s3_endpoint='localhost:9000';")
-con.sql("SET s3_access_key_id='minioadmin';")
-con.sql("SET s3_secret_access_key='minioadmin';")
-con.sql("SET s3_use_ssl=false;")
-con.sql("SET s3_url_style='path';")
-
-result = con.sql("""
-    SELECT
-        p.productLine,
-        ROUND(SUM(f.orderAmount), 2) AS total_sales
-    FROM read_parquet('s3://classicmodels/warehouse/fact_orders/*.parquet') f
-    JOIN read_parquet('s3://classicmodels/warehouse/dim_products/*.parquet') p
-        ON f.productCode = p.productCode
-    GROUP BY p.productLine
-    ORDER BY total_sales DESC
-""").df()
-
-print(result)
-```
-
-## 7. Run the Jupyter Dashboard
-
-The dashboard uses the DuckDB Python library to query Parquet files from MinIO, then builds charts with Pandas, Seaborn, Matplotlib, and ipywidgets.
 
 Start Jupyter:
 
@@ -288,7 +262,7 @@ More details are in:
 dashboard/README.md
 ```
 
-## 8. Stop Services
+## 7. Stop Services
 
 Stop each service from its folder:
 
@@ -325,7 +299,7 @@ docker-compose down -v
 
 Use this carefully because it removes the local Docker volumes.
 
-## 9. Troubleshooting
+## 8. Troubleshooting
 
 ### Docker Compose command does not work
 
@@ -341,7 +315,7 @@ use:
 docker-compose up -d
 ```
 
-This repo was tested with Colima and the legacy `docker-compose` command.
+If your Docker setup does not support the newer Compose plugin, use the legacy `docker-compose` command.
 
 ### MySQL is not reachable
 
@@ -405,7 +379,7 @@ localhost:9000
 
 The dashboard notebook reads `S3_ENDPOINT` from the environment, so the Docker Compose setup configures this automatically.
 
-## 10. What You Have Built
+## 9. What You Have Built
 
 By the end, you have a full local data engineering lifecycle:
 

@@ -43,7 +43,7 @@ Open:
 http://localhost:3000
 ```
 
-On macOS with Colima, the Docker setup uses `host.docker.internal` to reach the MySQL port exposed by the database container.
+When running the frontend in Docker, the setup uses `host.docker.internal` to reach the MySQL port exposed by the database container.
 
 ## Database Settings
 
