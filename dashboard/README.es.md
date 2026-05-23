@@ -65,6 +65,12 @@ El notebook incluye la imagen del esquema:
 schema_after_etl.png
 ```
 
+Las ideas de reportes para clase y asignaciones por grupo estan disponibles en:
+
+```text
+../docs/dashboard-report-assignments.es.md
+```
+
 ## Ejecutar Localmente Sin Docker
 
 ```bash

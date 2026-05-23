@@ -65,6 +65,12 @@ The notebook includes the schema image:
 schema_after_etl.png
 ```
 
+Class report ideas and group assignments are available in:
+
+```text
+../docs/dashboard-report-assignments.md
+```
+
 ## Run Locally Without Docker
 
 ```bash

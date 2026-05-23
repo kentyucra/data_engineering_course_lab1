@@ -7,6 +7,8 @@ services:
     environment:
       MINIO_ROOT_USER: minioadmin
       MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_SERVER_URL: https://minio-api.data-engineering-lab1.fratellidevs.com
+      MINIO_BROWSER_REDIRECT_URL: https://minio-console.data-engineering-lab1.fratellidevs.com
     ports:
       - "9000:9000"
       - "9001:9001"
